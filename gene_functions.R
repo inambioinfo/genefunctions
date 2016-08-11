@@ -8,6 +8,22 @@ require(ggplot2)
 require(RColorBrewer)
 
 # annotation_row is a data.frame
+
+#' gene_pheatmap
+#'
+#' @param exprdat 
+#' @param sampleid 
+#' @param annotation_row 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' 
+#' emat = matrix(rnorm(100),25,4)
+#' samp = c("H1","H2","C1","C2")
+#' ann = data.frame("fac1"=rep(c("M","N"),2),"fac2"=c("A","B","C","C"))
+#' gene_pheatmap(emat,samp,ann)
 gene_pheatmap <- function(exprdat,sampleid,annotation_row=NULL) {
   sampleDists <- dist(t(exprdat))
   sampleDistMatrix <- as.matrix(sampleDists)
@@ -25,9 +41,38 @@ gene_pheatmap <- function(exprdat,sampleid,annotation_row=NULL) {
 
 # add filter on columns (samples)
 # gene x sample matrix like in array data
+# 
+#' gene_pcaplot
+#'
+#' @param exprdat 
+#' @param sampleid 
+#' @param groupdat 
+#' @param colorfactor 
+#' @param shapefactor 
+#' @param plot_sampleids 
+#' @param pcnum 
+#' @param plottitle 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' 
+#' emat = cbind(matrix(rnorm(400,5),ncol=2),matrix(rnorm(400,-3),ncol=2))
+#' samp = c("H1","H2","C1","C2")
+#' grdat = data.frame("fac1"=rep(c("M","N"),2),"fac2"=c("A","B","C","C"))
+#' colorname = "fac1"
+#' gene_pcaplot(exprdat=emat,sampleid=samp,groupdat=grdat,colorfactor=colorname)
 gene_pcaplot <- function(exprdat,sampleid,groupdat=NULL,colorfactor=NULL,shapefactor=NULL,
                          plot_sampleids=TRUE, pcnum=1:2, plottitle = "PCA Plot") {
   #adapted from DESeq2:::plotPCA.DESeqTransform
+  if((!is.null(groupdat))&(!is.null(colorfactor))) {
+    if(!colorfactor%in%colnames(groupdat)) stop("colorfactor must be a column name of groupdat")
+  }
+  if((!is.null(groupdat))&(!is.null(shapefactor))) {
+    if(!shapefactor%in%colnames(groupdat)) 
+    stop("shapefactor must be a column name of groupdat")
+  }
   pca <- prcomp(t(exprdat))
   percentVar <- pca$sdev^2/sum(pca$sdev^2)
   if(is.null(groupdat)) groupdat = data.frame("group"=rep(1,ncol(exprdat)))
@@ -151,6 +196,7 @@ scatter_compare <- function(xmat,ymat,colvec,
   #        col=colvec, pch=".", cex=.8)
 }
 
+# work in progress
 gene_dotplots <- function(dat,
                           selectgenes,
                           title="") {
