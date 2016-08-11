@@ -70,8 +70,12 @@ gene_pcaplot <- function(exprdat,sampleid,groupdat=NULL,colorfactor=NULL,shapefa
     if(!colorfactor%in%colnames(groupdat)) stop("colorfactor must be a column name of groupdat")
   }
   if((!is.null(groupdat))&(!is.null(shapefactor))) {
-    if(!shapefactor%in%colnames(groupdat)) 
-    stop("shapefactor must be a column name of groupdat")
+    if(!shapefactor%in%colnames(groupdat)) stop("shapefactor must be a column name of groupdat")
+    if(plot_sampleids) {
+      warning("plot_sampleids=TRUE and shapefactor is specified, changing plot_sampleids=FALSE to use shapefactor")
+     plot_sampleids=FALSE 
+    }
+    
   }
   pca <- prcomp(t(exprdat))
   percentVar <- pca$sdev^2/sum(pca$sdev^2)
