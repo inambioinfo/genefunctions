@@ -125,12 +125,19 @@ gene_pcaplot <- function(exprdat,sampleid,groupdat=NULL,colorfactor=NULL,shapefa
 
 gene_volcanoplot  <- function(resdat,log2fc.cut=2,padj.cut = 0.05,pval.cut = 0.05,
                               pval.name="pval",padj.name="padj",log2fc.name="log2fc",
-                              mytitle="Volcano Plot",xlim=NULL,ylim=NULL) {
+                              main="Volcano Plot",...) {
+  
+  check_colnames = !(c(pval.name, padj.name, log2fc.name)%in%colnames(resdat))
+  if(sum(check_colnames)>0) stop(
+    paste("The following argument values are not column names of resdat:\n",
+          paste0(c("pval.name", "padj.name", "log2fc.name")[check_colnames],collapse=" ") )
+  )
+  
   resdat = resdat[,match(c(pval.name,padj.name,log2fc.name),colnames(resdat))]
   colnames(resdat) = c("pval","padj","log2fc")
   if(is.null(xlim)) {xlim = range(resdat$log2fc)}
   if(is.null(ylim)) {ylim = range(-log10(resdat$pval))}
-  with(resdat, plot(log2fc, -log10(pval), pch=20, main=mytitle, xlim=xlim,ylim=ylim))
+  with(resdat, plot(log2fc, -log10(pval), pch=20, main=main,...))
   legend("topright",pch=20,legend = c(paste0("p<",pval.cut),
                                       paste0("padj<",padj.cut),
                                       paste0("|log2fc|>",log2fc.cut),
@@ -146,9 +153,20 @@ gene_volcanoplot  <- function(resdat,log2fc.cut=2,padj.cut = 0.05,pval.cut = 0.0
   with(subset(resdat, padj<padj.cut & abs(log2fc)>log2fc.cut), points(log2fc, -log10(pval), pch=20, col="green"))
 }
 
-gene_dge_table <- function(resdat,log2fc.cut=2,padj.cut = 0.05,pval.cut = 0.05,
-                           pval.name="pval",padj.name="padj",log2fc.name="log2fc",
+gene_dge_table <- function(resdat,
+                           log2fc.cut=2,
+                           padj.cut = 0.05,
+                           pval.cut = 0.05,
+                           pval.name="pval",
+                           padj.name="padj",
+                           log2fc.name="log2fc",
                            gene.name="geneid") {
+
+  check_colnames = !(c(pval.name, padj.name, log2fc.name, gene.name)%in%colnames(resdat))
+  if(sum(check_colnames)>0) stop(
+    paste("The following argument values are not column names of resdat:\n",
+          paste0(c("pval.name", "padj.name", "log2fc.name", "gene.name")[check_colnames],collapse=" ") )
+  )
   
   outres = resdat[,match(c(gene.name,pval.name,padj.name,log2fc.name),colnames(resdat))]
   colnames(outres) = c(gene.name,"pval","padj","log2fc")
