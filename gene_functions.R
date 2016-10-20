@@ -1,6 +1,6 @@
 # functions to make visualizations of unsupervised clustering methods
 # Jessica Minnier
-# Updated: July 13, 2016
+# Updated: October 19, 2016
 # 
 # Adapted from DESeq2 vignette - MI Love, S Anders, W Huber
 # 
@@ -61,8 +61,10 @@ gene_pheatmap <- function(exprdat,sampleid,annotation_row=NULL) {
 #' emat = cbind(matrix(rnorm(400,5),ncol=2),matrix(rnorm(400,-3),ncol=2))
 #' samp = c("H1","H2","C1","C2")
 #' grdat = data.frame("fac1"=rep(c("M","N"),2),"fac2"=c("A","B","C","C"))
-#' colorname = "fac1"
-#' gene_pcaplot(exprdat=emat,sampleid=samp,groupdat=grdat,colorfactor=colorname)
+#' gene_pcaplot(exprdat=emat,sampleid=samp,groupdat=grdat,colorfactor="fac1")
+#' gene_pcaplot(exprdat=emat,sampleid=samp,
+#'    groupdat=grdat,colorfactor="fac1",
+#'    shapefactr="fac2")
 gene_pcaplot <- function(exprdat,sampleid,groupdat=NULL,colorfactor=NULL,shapefactor=NULL,
                          plot_sampleids=TRUE, pcnum=1:2, plottitle = "PCA Plot") {
   #adapted from DESeq2:::plotPCA.DESeqTransform
@@ -188,16 +190,15 @@ density_plots <- function(mat,col.labels=NULL,colvec=NULL,ltyvec=NULL,
          col=colvec, lty=ltyvec, lwd=2, cex=.8)
 }
 
-scatter_compare <- function(xmat,ymat,colvec,
-                            xlab="",ylab="",title="",...) {
+scatter_compare <- function(xmat,ymat,colvec,col.labels,
+                            xlab="",ylab="",main="",...) {
   xmat = as.matrix(xmat)
   ymat = as.matrix(ymat)
   plot(xmat,ymat,
        pch='.',
-       xlab=xlab,ylab=ylab,main=title,
+       xlab=xlab,ylab=ylab,main=main,
        col=matrix(colvec, ncol=length(colvec), nrow=nrow(xmat), byrow=T),...)
-  # legend(x="bottomright", legend=col.labels, 
-  #        col=colvec, pch=".", cex=.8)
+  legend(x="bottomright", legend=col.labels, fill = colvec,cex=.8)
 }
 
 # work in progress
