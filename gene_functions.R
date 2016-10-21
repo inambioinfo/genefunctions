@@ -30,7 +30,7 @@ gene_pheatmap <- function(exprdat,sampleid,annotation_row=NULL) {
   rownames(sampleDistMatrix) <- sampleid
   if(!is.null(annotation_row)) rownames(annotation_row) <- sampleid
   colnames(sampleDistMatrix) <- NULL
-  colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+  colors <- grDevices::colorRampPalette( rev(RColorBrewer::brewer.pal(9, "Blues")) )(255)
   pheatmap::pheatmap(sampleDistMatrix,
                      clustering_distance_rows=sampleDists,
                      clustering_distance_cols=sampleDists,
@@ -223,6 +223,7 @@ scatter_compare <- function(xmat,ymat,colvec,col.labels,
 gene_dotplots <- function(dat,
                           selectgenes,
                           title="") {
+  #dat in in long format with columns genename, y, SampleID, group
   tmpdat = dat%>%filter(genename%in%selectgenes)
   ggplot(tmpdat,aes(SampleID,y,color=group))+
     geom_boxplot(position="dodge")+
